@@ -1,0 +1,60 @@
+<?php
+
+function navbar_local_tasks_navbar() {
+
+  $items = array();
+
+  $tabs = menu_primary_local_tasks();
+
+  // Bail out early because there are no page actions.
+  if (empty($tabs)) {
+    return $items;
+  }
+
+  $links = array();
+
+  foreach ($tabs as $key => $tab) {
+    $links['tab_' . $key] = array(
+      'title' => $tab['#link']['title'],
+      'href' => $tab['#link']['href'],
+    );
+  }
+
+  $items['tabs'] = array(
+    '#type' => 'navbar_item',
+    'tab' => array(
+      '#type' => 'link',
+      '#href' => '#',
+      '#title' => t('Current page actions'),
+      '#options' => array(
+        'attributes' => array(
+          'title' => t('Edit'),
+          'class' => array('navbar-icon', 'navbar-icon-shortcut',),
+        ),
+      ),
+    ),
+    'tray' => array(
+      '#heading' => t('Current page actions'),
+      'tabs_links' => array(
+        '#theme' => 'links__navbar_tabs',
+        '#links' => $links,
+        '#attributes' => array(
+          'class' => array('navbar-menu', 'navbar-menu-tabs'),
+        ),
+      ),
+    ),
+    '#weight' => 500,
+  );
+
+  drupal_add_js(drupal_get_path('module', 'navbar_local_tasks') . '/js/navbar_local_tasks.js');
+
+  return $items;
+}
+
+/**
+ * Implements hook_init().
+ */
+function navbar_local_tasks_init() {
+  // Add jquery.browser.min.js to avoid errors with media module popups.
+  drupal_add_js(drupal_get_path('module', 'navbar_local_tasks') . '/js/jquery.browser.min.js');
+}
